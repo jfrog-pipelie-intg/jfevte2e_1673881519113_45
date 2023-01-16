@@ -1,0 +1,26 @@
+on:
+  repository_dispatch:
+    types: deployed
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Create file Results.txt
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Add content to file
+        run: |
+          echo -n "sha256: ${{ github.event.client_payload.sha256 }}" > Results.txt
+
+      - name: push
+        run: |
+          git config --global user.email "test@test.test"
+          git config --global user.name "jfrog-pipelie-intg"
+          git add ./Results.txt
+          git commit -m "Add Results.txt"
+          git push
